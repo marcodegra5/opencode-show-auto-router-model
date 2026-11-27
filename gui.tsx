@@ -36,7 +36,7 @@ export default Plugin.define({
         // Temporary: the idle label proves the pill renders while the routed model is unknown.
         return hit
           ? {
-              label: hit.model,
+              label: `${hit.model}${spend}`,
               title: `Auto Router: ${hit.model}`,
             }
           : { label: `router idle${spend}`, title: "Routed model and session spend" }

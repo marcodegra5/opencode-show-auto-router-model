@@ -35,7 +35,7 @@ test('GUI setup displays routed model and cleans up its resources', () => {
   assert.equal(pill.show({ session: { id: 'session', server: { data: { session: { cost: () => 0.01 } } } } }).label, 'router idle · $0.0100')
   listener({ data: { kind: 'primary', sessionID: 'session', requested: 'openrouter/auto', model: 'deepseek/deepseek-v4.1-flash-1017-very-long-model-name-without-spaces' } })
   const routed = pill.show({ session: { id: 'session', server: { data: { session: { cost: () => 0.01 } } } } })
-  assert.equal(routed.label, 'deepseek/deepseek-v4.1-flash-1017-very-long-model-name-without-spaces')
+  assert.equal(routed.label, 'deepseek/deepseek-v4.1-flash-1017-very-long-model-name-without-spaces · $0.0100')
   assert.equal(routed.title, 'Auto Router: deepseek/deepseek-v4.1-flash-1017-very-long-model-name-without-spaces')
   assert.match(styles, /session-plugin-pill/)
   assert.match(styles, /Auto Router:/)
