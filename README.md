@@ -1,6 +1,6 @@
 # OpenCode Show Auto Router Model
 
-A local OpenCode plugin that shows the model returned by OpenRouter for a routed request. The Desktop pill displays the latest detected model for the session; the terminal footer shows the routed model and session cost.
+A local OpenCode plugin that shows the model returned by OpenRouter for a routed request. The Desktop pill displays the latest detected model and the last completed assistant call's cost, when available. The terminal footer shows the routed model and session cost.
 
 ## Installation
 
@@ -27,4 +27,4 @@ The GUI bundle in `dist/` is required by OpenCode Desktop. Rebuild it after edit
 - The Desktop GUI API and its styling are experimental; OpenCode updates may require changes.
 - The displayed model is the latest detected response, not a history of models used. It is kept in memory and may be unavailable after a server restart.
 - The fallback cache may include background requests such as title generation or compaction. Live Desktop and terminal events filter for primary responses.
-- Session cost comes from OpenCode and is not the cost of an individual response.
+- Desktop cost is the amount stored by OpenCode for the last completed assistant call, not the total for an entire user turn that may contain multiple calls. OpenCode may calculate the amount when the provider does not report it. The terminal footer shows session cost instead.

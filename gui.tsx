@@ -31,15 +31,18 @@ export default Plugin.define({
       id: "router",
       show: ({ session }) => {
         const hit = routed[session.id]
-        const cost = session.server.data.session.cost(session.id)
-        const spend = typeof cost === "number" ? ` · $${cost.toFixed(4)}` : ""
+        const message = session.server.data.session.message.list(session.id).findLast((item) => item.type === "assistant")
+        const cost = message?.type === "assistant" && message.time.completed && message.model.providerID === "openrouter" && message.model.id === hit?.requested
+          ? message.cost
+          : undefined
+        const spend = typeof cost === "number" ? ` · last call $${cost.toFixed(6)}` : ""
         // Temporary: the idle label proves the pill renders while the routed model is unknown.
         return hit
           ? {
               label: `${hit.model}${spend}`,
               title: `Auto Router: ${hit.model}`,
             }
-          : { label: `router idle${spend}`, title: "Routed model and session spend" }
+          : { label: "router idle", title: "Routed model" }
       },
     })
 
