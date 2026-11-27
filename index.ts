@@ -1,4 +1,5 @@
 import { Plugin } from "@opencode/plugin"
+import { read } from "./read.ts"
 import { AutoRouter } from "./rpc.ts"
 
 /**
@@ -9,28 +10,15 @@ import { AutoRouter } from "./rpc.ts"
  * response body, keeps the result per session, and emits it over RPC for the TUI and GUI parts.
  */
 
-const MODEL = /"model"\s*:\s*"([^"]+)"/g
-const MAX_BYTES = 8192
+const MAX_SESSIONS = 200
 
 const last = new Map<string, { requested: string; model: string }>()
 
-const read = async (response: Response) => {
-  const reader = response.body?.getReader()
-  if (!reader) return []
-  const decoder = new TextDecoder()
-  let buf = ""
-  try {
-    while (buf.length < MAX_BYTES) {
-      const { value, done } = await reader.read()
-      if (done || !value) break
-      buf += decoder.decode(value, { stream: true })
-      if (MODEL.test(buf)) break
-    }
-  } finally {
-    await reader.cancel().catch(() => {})
-  }
-  MODEL.lastIndex = 0
-  return [...new Set([...buf.matchAll(MODEL)].map((match) => match[1]))]
+const remember = (sessionID: string, value: { requested: string; model: string }) => {
+  // Map keeps insertion order: re-insert to mark as recent, then drop the oldest past the cap.
+  last.delete(sessionID)
+  last.set(sessionID, value)
+  if (last.size > MAX_SESSIONS) last.delete(last.keys().next().value!)
 }
 
 export default Plugin.define({
@@ -43,12 +31,14 @@ export default Plugin.define({
     await ctx.session.hook(
       "http.response",
       (event) => {
+        // Title and compaction requests route too; only the answer the user reads counts.
+        if (event.kind !== "primary") return
         const requested = event.model.id
         // Fire-and-forget: awaiting the body here would stall the stream the session is reading.
         void (async () => {
           for (const model of await read(event.response.clone())) {
             if (model === requested) continue
-            last.set(event.sessionID, { requested, model })
+            remember(event.sessionID, { requested, model })
             await registration.events.emit("routed", {
               sessionID: event.sessionID,
               requested,

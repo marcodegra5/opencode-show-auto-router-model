@@ -22,7 +22,8 @@ export default Plugin.define({
       render: () => {
         const route = context.ui.router.current()
         const sessionID = route?.type === "session" ? route.sessionID : routed()?.sessionID
-        const label = routed()?.label
+        // The signal holds the last routed session; never show its model beside another session's cost.
+        const label = routed()?.sessionID === sessionID ? routed()?.label : undefined
         const cost = sessionID ? context.data.session.cost(sessionID) : undefined
         const text = [label, typeof cost === "number" ? `$${cost.toFixed(4)}` : ""].filter(Boolean).join(" · ")
         return text ? <text>{text}</text> : null

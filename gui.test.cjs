@@ -34,7 +34,7 @@ test('GUI setup displays routed model and cleans up its resources', () => {
   })
   let messages = []
   const session = { id: 'session', server: { data: { session: { cost: () => 0.01, message: { list: () => messages } } } } }
-  assert.equal(pill.show({ session }).label, 'router idle')
+  assert.equal(pill.show({ session }), undefined)
   listener({ data: { kind: 'primary', sessionID: 'session', requested: 'openrouter/auto', model: 'deepseek/deepseek-v4.1-flash-1017-very-long-model-name-without-spaces' } })
   messages = [
     { type: 'assistant', model: { providerID: 'openrouter', id: 'openrouter/auto' }, time: { completed: 1 }, cost: 0.005 },
