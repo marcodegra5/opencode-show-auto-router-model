@@ -2,7 +2,7 @@
 
 An OpenCode plugin that shows which model OpenRouter actually used when you pick a router model such as Auto Router. The Desktop pill above the composer shows the routed model and the cost of the last completed assistant call, when available. The terminal footer shows the routed model and session cost.
 
-<!-- Screenshot: add docs/pill.png showing the Desktop pill -->
+![Desktop pill showing the routed model and last call cost](docs/pill.png)
 
 ## Compatibility
 
